@@ -6,5 +6,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+<<<<<<< HEAD
+=======
+	<classpathentry kind="lib" path="C:/Users/User/Downloads/sqldeveloper-23.1.1.345.2114-x64/sqldeveloper/jdbc/lib/ojdbc11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/smhrd/Downloads/sqldeveloper-23.1.1.345.2114-x64/sqldeveloper/jdbc/lib/ojdbc11.jar"/>
+>>>>>>> 5500d641c09832b615af041fe986740c893a533a
 	<classpathentry kind="output" path="bin"/>
 </classpath>
