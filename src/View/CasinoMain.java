@@ -76,10 +76,9 @@ public class CasinoMain {
 			System.out.print("실행하실 메뉴를 선택해주세요 : ");
 			int choice2 = sc.nextInt();
 			if(choice2 == 1) {
-				con.playBlackJack(dto);				
-				
+				con.playBlackJack(dto);								
 			}else if(choice2 == 2) {
-				
+								
 			}else if(choice2 == 3) {
 				
 			}else if(choice2 == 4) {
