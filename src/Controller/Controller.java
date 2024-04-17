@@ -10,12 +10,13 @@ import Model.CasinoDTO;
 public class Controller {
 
 	CasinoDAO dao = new CasinoDAO();
+	Random rd = new Random();
 
 	// 로그인
 	public boolean playerLogin(CasinoDTO dto) {
 		dto = dao.playerLogin(dto);
-		boolean isLogin = false;
 
+		boolean isLogin = false;
 		if (dto.getPhoneNumber() == null) {
 			System.out.println("플레이어 정보가 일치하지 않습니다.");
 		} else {
@@ -24,6 +25,12 @@ public class Controller {
 		}
 
 		return isLogin;
+	}
+	
+	public CasinoDTO playerLogin2(CasinoDTO dto) {
+		dto = dao.playerLogin(dto);
+
+		return dto;
 	}
 
 	// 회원가입
@@ -53,8 +60,8 @@ public class Controller {
 
 		System.out.println("[CHIP 랭킹]");
 		System.out.println();
-		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t블랙잭플레이횟수 \t\t슬롯플레이횟수  \t\t홀덤플레이횟수");
-		System.out.println("============================================================================");
+		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t블랙잭 \t\t슬롯  \t\t홀덤");
+		System.out.println("=================================================================================");
 		for (int i = 0; i < list.size(); i++) {
 			System.out.print(list.get(i).getNick() + "\t\t");
 			System.out.print(list.get(i).getId() + "\t\t");
@@ -63,7 +70,7 @@ public class Controller {
 			System.out.print(list.get(i).getSlot() + "\t\t");
 			System.out.println(list.get(i).getHoldem() + "\t\t");
 		}
-		System.out.println("============================================================================");
+		System.out.println("=================================================================================");
 
 	}
 
@@ -73,15 +80,15 @@ public class Controller {
 
 		System.out.println("[BLACKJACK 판수 랭킹]");
 		System.out.println();
-		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t블랙잭플레이횟수");
-		System.out.println("============================================================================");
+		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t블랙잭");
+		System.out.println("==================================================================");
 		for (int i = 0; i < list.size(); i++) {
 			System.out.print(list.get(i).getNick() + "\t\t");
 			System.out.print(list.get(i).getId() + "\t\t");
 			System.out.print(list.get(i).getChip() + "\t\t");
 			System.out.println(list.get(i).getBlackjack() + "\t\t");
 		}
-		System.out.println("============================================================================");
+		System.out.println("==================================================================");
 	}
 
 	// 슬롯 랭킹 출력
@@ -90,15 +97,15 @@ public class Controller {
 
 		System.out.println("[SLOT 판수 랭킹]");
 		System.out.println();
-		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t슬롯플레이횟수");
-		System.out.println("============================================================================");
+		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t슬롯");
+		System.out.println("==================================================================");
 		for (int i = 0; i < list.size(); i++) {
 			System.out.print(list.get(i).getNick() + "\t\t");
 			System.out.print(list.get(i).getId() + "\t\t");
 			System.out.print(list.get(i).getChip() + "\t\t");
 			System.out.println(list.get(i).getSlot() + "\t\t");
 		}
-		System.out.println("============================================================================");
+		System.out.println("==================================================================");
 	}
 
 	// 홀덤 랭크게임 출력
@@ -107,15 +114,15 @@ public class Controller {
 
 		System.out.println("[HOLDEM 판수 랭킹]");
 		System.out.println();
-		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t홀덤플레이횟수");
-		System.out.println("============================================================================");
+		System.out.println("닉네임 \t\tID \t\t칩개수 \t\t홀덤");
+		System.out.println("==================================================================");
 		for (int i = 0; i < list.size(); i++) {
 			System.out.print(list.get(i).getNick() + "\t\t");
 			System.out.print(list.get(i).getId() + "\t\t");
 			System.out.print(list.get(i).getChip() + "\t\t");
 			System.out.println(list.get(i).getHoldem() + "\t\t");
 		}
-		System.out.println("============================================================================");
+		System.out.println("==================================================================");
 	}
 
 	public void playBlackJack(CasinoDTO dto) {
@@ -130,8 +137,8 @@ public class Controller {
 		int choice = 0;
 
 		// DB저장 변수
-		int countChip = 0; // 칩개수
-		int countPlay = 0; // 플레이횟수
+		int countChip = dto.getChip(); // 칩개수
+		int countPlay = dto.getBlackjack(); // 플레이횟수
 
 		int chip = dto.getChip();
 
@@ -216,12 +223,94 @@ public class Controller {
 			}
 
 		}
-		
+
 		String id = dto.getId();
-		
+
 		dto = new CasinoDTO(countChip, countPlay, id);
 		dao.updatePlayer(dto);
+
+	}
+
+	public void playHoldem(CasinoDTO dto) {
+		// DB저장 변수
+		int countChip = dto.getHoldem(); // 칩개수
+		System.out.println("======");
+		int countPlay2 = dto.getHoldem(); // 플레이횟수
+
+		int chip = dto.getChip();
+
+		// 베팅할 금액 입력받기
+		dao.getBettingHD();
 		
+		while(true) {
+			System.out.println("==============Holdem 게임을 시작하겠습니다===============");
+			
+			dao.chogihwa();
+			while(true) {
+				
+				dao.chogihwa();
+	            for (int j = 0; j < 2; j++) { // 플레이어 카드 2장 뽑기 위한 for문
+	            	dao.getPlayerCard();
+	            }
+	            for (int j = 0; j < 2; j++) { // 컴퓨터 카드 뽑기
+	            	dao.getComCard();
+	            }            
+	            dao.printPlayerCard();
+	            
+	            boolean isKeep = dao.keepBetting();
+	            if(isKeep ==false)
+	            	break;
+	            for (int j = 0; j < 3; j++) { // 공용카드 3장을 뽑는 과정
+	                dao.getCommonCard();
+	             }
+	             dao.printCommonCard();
+	             boolean isKeep2 = dao.keepBetting2();
+	             if(isKeep2 ==false)
+	             	break;
+	             dao.getCommonCard();
+	             dao.printCommonCard();
+	             boolean isKeep3 =dao.keepBetting3();
+	             if(isKeep3 ==false)
+	              	break;
+	             dao.getCommonCard();
+	             dao.printCommonCard();
+	             boolean isKeep4 = dao.keepBetting4();
+	             if(isKeep4 ==false)
+	               	break;
+	             // 승리 판별
+	             dao.SumCard();
+	             dao.isPlayerFlush();
+	             dao.isPlayerStrait();
+	             dao.isPlayerHighPair();
+	             dao.isPlayerLowPair();
+	             dao.isPlayerHighcard();
+	             
+	             dao.comChogihwa();
+	             dao.isComFlush();
+	             dao.isComStrait();
+	             dao.isComHighpair();
+	             dao.isComLowpair();
+	             dao.isComHighcard();
+	             // 승리 판별
+	             dao.judge();
+	             break;
+			}
+			boolean isKeep5 = dao.compareChip();
+            if(isKeep5 == false)
+            	break;
+            
+            countPlay2++;
+            boolean isKeep6 = dao.playMore();
+            if(isKeep6 == false) {
+            	countChip = dao.getChip2();
+            	break;
+            }
+		}
+		
+		String id = dto.getId();
+
+		dto = new CasinoDTO(countChip, id, countPlay2);
+		dao.updatePlayer3(dto);
 	}
 
 }

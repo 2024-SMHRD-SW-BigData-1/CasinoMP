@@ -47,6 +47,12 @@ public class CasinoDTO {
 		this.blackjack = blackjack;
 		this.id = id;
 	}
+	
+	public CasinoDTO(int chip, String id, int holdem) {
+		this.chip = chip;
+		this.id = id;
+		this.holdem = holdem;
+	}
 
 	// getter, setter
 	public String getId() {

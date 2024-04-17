@@ -32,6 +32,7 @@ public class CasinoMain {
 
 				// 결과값을 return해서 일치할시 게임시작 -- break;
 				boolean isLogin = con.playerLogin(dto);
+				dto = con.playerLogin2(dto);
 				// 결과값이 일치하면 while문 종료
 				// 결과값이 일치하지 않을시 다시 로그인창 실행
 				if (isLogin == true)
@@ -78,9 +79,8 @@ public class CasinoMain {
 			if(choice2 == 1) {
 				con.playBlackJack(dto);								
 			}else if(choice2 == 2) {
-								
 			}else if(choice2 == 3) {
-				
+				con.playHoldem(dto);
 			}else if(choice2 == 4) {
 				System.out.println("================= 랭킹  =================");
 				System.out.print("[1] CHIP 랭킹 [2] 게임별 랭킹  >> ");
