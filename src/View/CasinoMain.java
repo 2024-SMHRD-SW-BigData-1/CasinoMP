@@ -59,6 +59,7 @@ public class CasinoMain {
 				con.findPlayer(dto);
 				
 			}else if(choice == 4) {
+				System.out.println("게임을 종료합니다.");
 				System.exit(0);
 			}else 
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");			

@@ -50,7 +50,7 @@ public class CasinoDAO {
 	}
 
 	// 플레이어 로그인 일치/불일치 확인
-	public int playerLogin(CasinoDTO dto) { // id, pw
+	public CasinoDTO playerLogin(CasinoDTO dto) { // id, pw
 
 		int cnt = 0;
 		dbOpen(); // 동적로딩
@@ -62,7 +62,6 @@ public class CasinoDAO {
 			psmt.setString(2, dto.getPw());
 
 			rs = psmt.executeQuery();
-
 			
 			if (rs.next()) {
 				String id = rs.getString("ID");
@@ -73,7 +72,6 @@ public class CasinoDAO {
 				int blackjack = rs.getInt("BLACKJACK");
 				int slot = rs.getInt("SLOT");
 				int holdem = rs.getInt("HOLDEM");
-				cnt = 1;
 
 				dto = new CasinoDTO(id, pw, nick, phoneNumber, chip, blackjack, slot, holdem);
 			}
@@ -84,7 +82,7 @@ public class CasinoDAO {
 			dbClose();
 		}
 		
-		return cnt;
+		return dto;
 	}
 
 	// 회원가입기능구현
@@ -113,4 +111,45 @@ public class CasinoDAO {
 
 		return cnt;
 	}
+	
+	public CasinoDTO findPlayer(CasinoDTO dto) {
+		int cnt = 0;
+		dbOpen(); // 동적로딩
+		String sql = "select * from casino_user where phone_number = ?";
+		try {
+			psmt = conn.prepareStatement(sql);
+
+			psmt.setString(1, dto.getPhoneNumber());
+
+			rs = psmt.executeQuery();
+			
+			if (rs.next()) {
+				String id = rs.getString("ID");
+				String pw = rs.getString("PW");
+				String nick = rs.getString("NICK");
+				String phoneNumber = rs.getString("PHONE_NUMBER");
+				int chip = rs.getInt("CHIP");
+				int blackjack = rs.getInt("BLACKJACK");
+				int slot = rs.getInt("SLOT");
+				int holdem = rs.getInt("HOLDEM");
+
+				dto = new CasinoDTO(id, pw);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("SQL문 오류!");
+		} finally {
+			dbClose();
+		}
+		
+		return dto;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 }

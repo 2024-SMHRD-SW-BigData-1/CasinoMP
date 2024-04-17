@@ -9,15 +9,16 @@ public class Controller {
 
 	// 로그인
 	public boolean playerLogin(CasinoDTO dto) {
-		int cnt  = dao.playerLogin(dto);
+		dto = dao.playerLogin(dto);
 		boolean isLogin = false;
 		
-		if(cnt==1) {
-			System.out.println("로그인성공!");
+		if(dto.getPhoneNumber()==null) {
+			System.out.println("플레이어 정보가 일치하지 않습니다.");			
+		}else {
+			System.out.println("플레이어 "+dto.getId()+" 로그인성공!");
 			isLogin = true;
-		}else
-			System.out.println("플레이어 정보가 일치하지 않습니다.");
-		
+		}
+
 		return isLogin;
 	}
 
@@ -26,14 +27,19 @@ public class Controller {
 		int cnt = dao.insert(dto);
 
 		if (cnt > 0) {
-			System.out.println("학생 등록 성공");
+			System.out.println("플레이어 등록 성공");
 		} else {
-			System.out.println("학생 등록 실패");
+			System.out.println("플레이어 등록 실패");
 		}
 	}
-	
+
 	// 계정찾기
 	public void findPlayer(CasinoDTO dto) {
-		//dao.findPlayer();
+		dto = dao.findPlayer(dto);
+
+		if (dto.getId() == null)
+			System.out.println("찾으시는 아이디와 비밀번호가 존재하지 않습니다.");
+		else
+			System.out.println("아이디 : " + dto.getId() + "    " + "비밀번호 : " + dto.getPw());
 	}
 }
