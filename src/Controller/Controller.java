@@ -5,12 +5,14 @@ import java.util.Random;
 import java.util.Scanner;
 
 import Model.CasinoDAO;
+import Model.CasinoDAO_music;
 import Model.CasinoDTO;
 
 public class Controller {
 
 	CasinoDAO dao = new CasinoDAO();
 	Random rd = new Random();
+	CasinoDAO_music music = new CasinoDAO_music();
 
 	// 로그인
 	public boolean playerLogin(CasinoDTO dto) {
@@ -26,13 +28,35 @@ public class Controller {
 
 		return isLogin;
 	}
-	
+
 	public CasinoDTO playerLogin2(CasinoDTO dto) {
 		dto = dao.playerLogin(dto);
 
 		return dto;
 	}
 
+	
+	public boolean musicPlayLobby(boolean playmusic) {
+
+		
+		if (playmusic) {
+			music.stop_music();
+			playmusic = false;
+		}
+		music.start_music();
+		playmusic = true;
+		
+		return playmusic;
+	}
+	
+	public boolean musicStop(boolean playmusic) {
+		if (playmusic) {
+			music.stop_music();
+			playmusic = false;
+		}
+		return playmusic;
+	}
+	
 	// 회원가입
 	public void insert(CasinoDTO dto) {
 		int cnt = dao.insert(dto);
@@ -124,6 +148,8 @@ public class Controller {
 		}
 		System.out.println("==================================================================");
 	}
+	
+
 
 	public void playBlackJack(CasinoDTO dto) {
 		Scanner sc = new Scanner(System.in);
@@ -135,6 +161,7 @@ public class Controller {
 		String dealP = null;
 		String name = null;
 		int choice = 0;
+		boolean isplaying = false;
 
 		// DB저장 변수
 		int countChip = dto.getChip(); // 칩개수
@@ -143,11 +170,18 @@ public class Controller {
 		int chip = dto.getChip();
 
 		// 베팅할 금액 입력받기
-		int bet = dao.betting();
+		int bet = dao.betting(dto);
 
 		while (true) {
+			
 			System.out.println("==============BlackJack 게임을 시작하겠습니다===============");
 
+			if (isplaying) {
+				music.stop_music();
+				isplaying = false;
+			}
+			music.start_card();
+			isplaying = true;
 			dao.startGame(); // Model 변수 초기화
 
 			// 플레이어와 딜러가 카드를 2장씩 뽑는다.
@@ -219,6 +253,7 @@ public class Controller {
 			String resume = dao.endGame(bet, keepPlaying);
 			if (resume.equals("N")) {
 				countChip = dao.getChip();
+				music.stop_music();
 				break;
 			}
 
@@ -228,89 +263,160 @@ public class Controller {
 
 		dto = new CasinoDTO(countChip, countPlay, id);
 		dao.updatePlayer(dto);
+		
 
 	}
 
 	public void playHoldem(CasinoDTO dto) {
 		// DB저장 변수
-		int countChip = dto.getHoldem(); // 칩개수
-		System.out.println("======");
+		int countChip = dto.getChip(); // 칩개수
 		int countPlay2 = dto.getHoldem(); // 플레이횟수
-
-		int chip = dto.getChip();
+		boolean isplaying = false;
 
 		// 베팅할 금액 입력받기
-		dao.getBettingHD();
-		
-		while(true) {
+		dao.getBettingHD(dto);
+
+		while (true) {
 			System.out.println("==============Holdem 게임을 시작하겠습니다===============");
-			
+
+			if (isplaying) {
+				music.stop_music();
+				isplaying = false;
+			}
+			music.start_card();
+			isplaying = true;
 			dao.chogihwa();
-			while(true) {
-				
+			while (true) {
+
 				dao.chogihwa();
-	            for (int j = 0; j < 2; j++) { // 플레이어 카드 2장 뽑기 위한 for문
-	            	dao.getPlayerCard();
-	            }
-	            for (int j = 0; j < 2; j++) { // 컴퓨터 카드 뽑기
-	            	dao.getComCard();
-	            }            
-	            dao.printPlayerCard();
-	            
-	            boolean isKeep = dao.keepBetting();
-	            if(isKeep ==false)
-	            	break;
-	            for (int j = 0; j < 3; j++) { // 공용카드 3장을 뽑는 과정
-	                dao.getCommonCard();
-	             }
-	             dao.printCommonCard();
-	             boolean isKeep2 = dao.keepBetting2();
-	             if(isKeep2 ==false)
-	             	break;
-	             dao.getCommonCard();
-	             dao.printCommonCard();
-	             boolean isKeep3 =dao.keepBetting3();
-	             if(isKeep3 ==false)
-	              	break;
-	             dao.getCommonCard();
-	             dao.printCommonCard();
-	             boolean isKeep4 = dao.keepBetting4();
-	             if(isKeep4 ==false)
-	               	break;
-	             // 승리 판별
-	             dao.SumCard();
-	             dao.isPlayerFlush();
-	             dao.isPlayerStrait();
-	             dao.isPlayerHighPair();
-	             dao.isPlayerLowPair();
-	             dao.isPlayerHighcard();
-	             
-	             dao.comChogihwa();
-	             dao.isComFlush();
-	             dao.isComStrait();
-	             dao.isComHighpair();
-	             dao.isComLowpair();
-	             dao.isComHighcard();
-	             // 승리 판별
-	             dao.judge();
-	             break;
+				for (int j = 0; j < 2; j++) { // 플레이어 카드 2장 뽑기 위한 for문
+					dao.getPlayerCard();
+				}
+				for (int j = 0; j < 2; j++) { // 컴퓨터 카드 뽑기
+					dao.getComCard();
+				}
+				dao.printPlayerCard();
+
+				boolean isKeep = dao.keepBetting();
+				if (isKeep == false)
+					break;
+				for (int j = 0; j < 3; j++) { // 공용카드 3장을 뽑는 과정
+					dao.getCommonCard();
+				}
+				dao.printCommonCard();
+				boolean isKeep2 = dao.keepBetting2();
+				if (isKeep2 == false)
+					break;
+				dao.getCommonCard();
+				dao.printCommonCard();
+				boolean isKeep3 = dao.keepBetting3();
+				if (isKeep3 == false)
+					break;
+				dao.getCommonCard();
+				dao.printCommonCard();
+				boolean isKeep4 = dao.keepBetting4();
+				if (isKeep4 == false)
+					break;
+				// 승리 판별
+				dao.SumCard();
+				dao.isPlayerFlush();
+				dao.isPlayerStrait();
+				dao.isPlayerHighPair();
+				dao.isPlayerLowPair();
+				dao.isPlayerHighcard();
+
+				dao.comChogihwa();
+				dao.isComFlush();
+				dao.isComStrait();
+				dao.isComHighpair();
+				dao.isComLowpair();
+				dao.isComHighcard();
+				// 승리 판별
+				dao.judge();
+				break;
 			}
 			boolean isKeep5 = dao.compareChip();
-            if(isKeep5 == false)
-            	break;
-            
-            countPlay2++;
-            boolean isKeep6 = dao.playMore();
-            if(isKeep6 == false) {
-            	countChip = dao.getChip2();
-            	break;
-            }
+			if (isKeep5 == false)
+				break;
+
+			countPlay2++;
+			boolean isKeep6 = dao.playMore();
+			if (isKeep6 == false) {
+				music.stop_music();
+				countChip = dao.getChip2();
+				break;
+			}
 		}
-		
+
 		String id = dto.getId();
 
 		dto = new CasinoDTO(countChip, id, countPlay2);
 		dao.updatePlayer3(dto);
+		
 	}
 
+	public void playSlot(CasinoDTO dto) {
+		
+		
+		int countChip = dto.getChip(); // 칩개수
+		int countPlay = dto.getSlot(); // 플레이횟수
+
+		Scanner sc = new Scanner(System.in);
+		Random rd = new Random();
+				
+		boolean isplaying = false;
+		System.out.println("============== SLOT 게임을 시작하겠습니다===============");
+		
+		dao.betSlot(dto);
+		while(true) {
+			dao.slotReset();
+			if (isplaying) {
+				music.stop_music();
+				isplaying = false;
+			}
+			 music.start_slot();
+	         isplaying = true;
+			
+			// 슬롯 출력
+			dao.printSlot();
+			// 비교
+			dao.compareSlot();
+			
+			// 칩계산
+			dao.chipResult();
+			boolean keep = dao.endSlot();
+			if(keep == false) {				
+				break;
+			}
+			
+			countPlay++;
+			boolean keep2 = dao.exitSlot();
+			if(keep2 == false) {
+				countChip = dao.getChip3();
+				music.stop_music();
+				break;
+			}
+		}
+		
+		String id = dto.getId();
+
+		dto = new CasinoDTO(id, countChip, countPlay);
+		dao.updatePlayer4(dto);
+		
+	}
+
+	
+
+	
+
 }
+
+
+
+
+
+
+
+
+
+

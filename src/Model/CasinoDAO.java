@@ -54,7 +54,18 @@ public class CasinoDAO {
 	public int fh;
 	public int tp; // 투페어 중복 검출 방지
 	public int op; // 원페어 중복 검출 방지
-	// ============================================
+	// ==================== 슬롯 ========================
+
+	private int chip3;
+	private double bet3;
+	private double minus;
+	private String prob[];
+	private String hit[];
+	private int per[];
+	private String slot[][];
+	private String play;
+
+	// ====================================================
 
 	Connection conn = null;
 	PreparedStatement psmt = null;
@@ -103,6 +114,19 @@ public class CasinoDAO {
 		fh = 0;
 		tp = 0; // 투페어 중복 검출 방지
 		op = 0; // 원페어 중복 검출 방지
+
+		// ============== 슬롯 ===============
+
+		chip3 = 3000;
+		bet3 = 0;
+		minus = 0;
+		play = null;
+
+		prob = new String[] { "777", "77", "77", "7", "7", "7", "bar", "bar", "수박", "수박", "수박", "수박", "수박", "종", "종",
+				"종", "종", "종", "종", "종", "사과", "사과", "사과", "사과", "사과", "사과", "사과", "사과", "체리", "체리", "체리" };
+		hit = new String[] { "777", "77", "7", "bar", "수박", "종", "사과", "체리" };
+		per = new int[] { 70, 50, 30, 20, 15, 12, 9, 8, 6 };
+		slot = new String[3][3]; 
 	}
 
 	// 데이터베이스와의 동적로딩/권한확인
@@ -435,7 +459,8 @@ public class CasinoDAO {
 		drow2 = null;
 	}
 
-	public int betting() {
+	public int betting(CasinoDTO dto) {
+		chip = dto.getChip();
 		System.out.println("베팅할 칩의 개수를 입력해주세요. ");
 		bet = sc.nextInt(); // 베팅할 금액
 
@@ -1166,7 +1191,8 @@ public class CasinoDAO {
 		}
 	}
 
-	public void getBettingHD() {
+	public void getBettingHD(CasinoDTO dto) {
+		chip2 = dto.getChip();
 		while (true) {
 			System.out.print("베팅할 금액을 설정하세요!! (최대 1000, 총 베팅 횟수 4회) \n베팅 금액 :");
 			bet2 = sc.nextInt();
@@ -1232,7 +1258,7 @@ public class CasinoDAO {
 
 	public boolean playMore() {
 		boolean keep = true;
-		System.out.print("한판 더 하시겠습니까? (Y/N)\n현재 보유 칩 : " + chip2);
+		System.out.print("한판 더 하시겠습니까? (Y/N) : ");
 		conti = sc.next();
 		if (conti.equals("N")) {
 			keep = false;
@@ -1271,12 +1297,114 @@ public class CasinoDAO {
 		return dto;
 
 	}
-	
-	
-	
+
 	public int getChip2() {
 		return chip2;
 	}
+
+	// ======================= 슬롯 ======================
+
+	public void betSlot(CasinoDTO dto) {
+		chip3 = dto.getChip();
+		System.out.println("베팅 금액을 입력해주세요 \n현재 보유 칩 : "+chip3+"\n베팅할 금액 >> ");
+		bet3 = sc.nextDouble();
+		minus = bet3;
+	}
 	
+	public void slotReset() {
+		 play = null;
+         bet3 = minus;
+	}
 	
+	public void printSlot() {
+		for (int i = 0; i < slot.length; i++) {
+            for (int j = 0; j < slot[0].length; j++) {
+               slot[i][j] = prob[rd.nextInt(prob.length)];
+               System.out.print(slot[i][j] + "\t");
+            }
+            System.out.println();
+         }
+	}
+	
+	public void compareSlot() {
+		for (int i = 0; i < slot.length; i++) {
+            if (slot[i][0].equals(slot[i][1]) && slot[i][1].equals(slot[i][2])) {
+               for (int j = 0; j < hit.length; j++) {
+                  if (slot[i][0].equals(hit[j])) {
+                     System.out.println(hit[j] + " 당첨!! " + per[j] + "배 획득!");
+                     bet3 *= per[j];
+                  }
+               }
+            } else if (slot[i][0].equals("체리")) {
+               bet3 *= 0.2;
+               System.out.println("체리 당첨!! 1.2배 획득!");
+            }
+         }
+	}
+	
+	public void chipResult() {
+		 if (bet3 == minus) {
+	            chip3 -= bet3;
+	         } else {
+	            chip3 += bet3;
+	         }
+	}
+	
+	public boolean endSlot() {
+		boolean keep = true;
+		System.out.println("보유 칩 개수 : " + chip3);
+        if (chip3 < bet3) {
+           System.out.println("칩이 부족합니다. 게임을 종료합니다");
+           keep = false;
+        }
+        return keep;
+	}
+	
+	public boolean exitSlot() {
+		boolean keep = true;
+		System.out.println("게임을 종료하시려면 exit을 입력해주세요");
+        play = sc.next();
+        if (play.equalsIgnoreCase("exit")) {
+           keep = false;
+        }
+        return keep;
+	}
+	
+	public int getChip3() {
+		return chip3;
+	}
+	
+	// 게임이 끝난뒤 UPDATE
+		public CasinoDTO updatePlayer4(CasinoDTO dto) {
+			int cnt = 0;
+			dbOpen(); // 동적로딩
+			String sql = "update casino_user set chip = ?, slot = ? where id = ?";
+			try {
+				psmt = conn.prepareStatement(sql);
+				// ? 인자 채워주기
+				psmt.setInt(1, dto.getChip());
+				psmt.setInt(2, dto.getSlot());
+				psmt.setString(3, dto.getId());
+
+				// psmt에 있는 쿼리문을 실행/결과값 처리
+				cnt = psmt.executeUpdate();
+				// executeUpdate - 쿼리문을 실행, 영향을 받은 행이 있는지 없는지 int자료형의 결과값
+				if (cnt > 0) {
+					System.out.println("플레이어 업데이트 성공");
+				} else {
+					System.out.println("플레이어 업데이트 실패");
+				}
+
+			} catch (SQLException e) {
+				System.out.println("SQL문 오류!");
+			} finally {
+				dbClose();
+			}
+
+			return dto;
+
+		}
+		
+	
+
 }

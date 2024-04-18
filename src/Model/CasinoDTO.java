@@ -42,16 +42,23 @@ public class CasinoDTO {
 		this.phoneNumber = phoneNumber;
 	}
 	
+	// blackjack update
 	public CasinoDTO(int chip, int blackjack, String id) {
 		this.chip = chip;
 		this.blackjack = blackjack;
 		this.id = id;
 	}
-	
+	//holdem update
 	public CasinoDTO(int chip, String id, int holdem) {
 		this.chip = chip;
 		this.id = id;
 		this.holdem = holdem;
+	}
+	// slot update
+	public CasinoDTO(String id, int chip, int slot) {
+		this.id = id;
+		this.chip = chip;
+		this.slot = slot;
 	}
 
 	// getter, setter
