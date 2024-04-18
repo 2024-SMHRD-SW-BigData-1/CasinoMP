@@ -1352,7 +1352,6 @@ public class CasinoDAO {
 	
 	public boolean endSlot() {
 		boolean keep = true;
-		System.out.println("보유 칩 개수 : " + chip3);
         if (chip3 < bet3) {
            System.out.println("칩이 부족합니다. 게임을 종료합니다");
            keep = false;
