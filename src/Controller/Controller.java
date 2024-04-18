@@ -14,20 +14,6 @@ public class Controller {
 	Random rd = new Random();
 	CasinoDAO_music music = new CasinoDAO_music();
 
-	// 로그인
-	public boolean playerLogin(CasinoDTO dto) {
-		dto = dao.playerLogin(dto);
-
-		boolean isLogin = false;
-		if (dto.getPhoneNumber() == null) {
-			System.out.println("플레이어 정보가 일치하지 않습니다.");
-		} else {
-			System.out.println("플레이어 " + dto.getId() + " 로그인성공!");
-			isLogin = true;
-		}
-
-		return isLogin;
-	}
 
 	public CasinoDTO playerLogin2(CasinoDTO dto) {
 		dto = dao.playerLogin(dto);
@@ -57,6 +43,20 @@ public class Controller {
 		return playmusic;
 	}
 	
+	// 로그인
+	public boolean playerLogin(CasinoDTO dto) {
+		dto = dao.playerLogin(dto);
+		
+		boolean isLogin = false;
+		if (dto.getPhoneNumber() == null) {
+			System.out.println("플레이어 정보가 일치하지 않습니다.");
+		} else {
+			System.out.println("플레이어 " + dto.getId() + " 로그인성공!");
+			isLogin = true;
+		}
+		
+		return isLogin;
+	}
 	// 회원가입
 	public void insert(CasinoDTO dto) {
 		int cnt = dao.insert(dto);
@@ -384,6 +384,7 @@ public class Controller {
 			
 			// 칩계산
 			dao.chipResult();
+			countChip = dao.getChip3();
 			boolean keep = dao.endSlot();
 			if(keep == false) {				
 				break;

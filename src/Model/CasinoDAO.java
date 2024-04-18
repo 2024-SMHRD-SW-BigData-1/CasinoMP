@@ -670,7 +670,6 @@ public class CasinoDAO {
 				if (dealerCard.get(dealerCard.size() - 1).equals(ranks[j])) {
 					if (j >= 10) {
 						dealerSum += 10;
-					} else {
 						dealerSum += j + 1;
 					}
 				}
@@ -1361,6 +1360,7 @@ public class CasinoDAO {
 	
 	public boolean exitSlot() {
 		boolean keep = true;
+		System.out.println("보유 칩 개수 : " + chip3);
 		System.out.println("게임을 종료하시려면 exit을 입력해주세요");
         play = sc.next();
         if (play.equalsIgnoreCase("exit")) {
